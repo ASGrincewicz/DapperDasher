@@ -6,9 +6,9 @@ int main()
    const int windowWidth = 512;
    const int windowHeight = 350;
    InitWindow(windowWidth, windowHeight, "Dapper Dasher");
-   //acceleration from gravity(pixels per frame)
-   const int gravity = 1;
-   const int jumpHeight = -22;
+   //acceleration from gravity(pixels per second/per second)
+   const int gravity = 1200;
+   const int jumpHeight = -600;
    bool isGrounded = true;
    bool isJumping = false;
    //Sprite variables
@@ -21,12 +21,18 @@ int main()
    Vector2 scarfyPos;
    scarfyPos.x = windowWidth/2 - scarfyRect.width/2;
    scarfyPos.y = windowHeight - scarfyRect.height;
+   // Animation
+   int frame = 0;
+   const float updateTime = 1.0/12.0;
+   float runningTime = 0;
    int velocity = 0;
     SetTargetFPS(60);
     while(!WindowShouldClose())
     {
+        const float deltaTime = GetFrameTime();
         BeginDrawing();
         ClearBackground(WHITE);
+        
         //Ground check
         if(scarfyPos.y >= windowHeight - scarfyRect.height)
         {
@@ -37,7 +43,7 @@ int main()
         else
         {
             isGrounded = false;
-            velocity += gravity;
+            velocity += gravity * deltaTime;
         }  
         
         if(IsKeyPressed(KEY_SPACE)&& !isJumping)
@@ -46,9 +52,18 @@ int main()
             velocity += jumpHeight;
         }
         //Update position
-        
-        scarfyPos.y += velocity;
-        
+        scarfyPos.y += velocity * deltaTime;
+        //Update animation frame
+        runningTime += deltaTime;
+        if(runningTime >= updateTime)
+        {
+            runningTime = 0.0;
+            scarfyRect.x = frame * scarfyRect.width;
+            frame++;
+        }
+       
+        if(frame > 5)
+            frame = 0;
         DrawTextureRec(scarfy, scarfyRect, scarfyPos, WHITE);
        
         EndDrawing();
