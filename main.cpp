@@ -3,25 +3,32 @@
 int main()
 {
    //Window Dimensions
-   const int windowWidth = 800;
-   const int windowHeight = 600;
+   const int windowWidth = 512;
+   const int windowHeight = 350;
    InitWindow(windowWidth, windowHeight, "Dapper Dasher");
    //acceleration from gravity(pixels per frame)
    const int gravity = 1;
+   const int jumpHeight = -22;
    bool isGrounded = true;
    bool isJumping = false;
-   //rectangle dimensions
-   const int rectWidth = 80;
-   const int rectHeight = 50;
-   int posY = windowHeight - rectHeight;
+   //Sprite variables
+   Texture2D scarfy = LoadTexture("/Volumes/ESD-USB/Dapper_Dasher_Project/textures/scarfy.png");
+   Rectangle scarfyRect;
+   scarfyRect.width = scarfy.width/6;
+   scarfyRect.height = scarfy.height;
+   scarfyRect.x = 0;
+   scarfyRect.y = 0;
+   Vector2 scarfyPos;
+   scarfyPos.x = windowWidth/2 - scarfyRect.width/2;
+   scarfyPos.y = windowHeight - scarfyRect.height;
    int velocity = 0;
     SetTargetFPS(60);
     while(!WindowShouldClose())
     {
         BeginDrawing();
-        ClearBackground(BLACK);
+        ClearBackground(WHITE);
         //Ground check
-        if(posY >= windowHeight - rectHeight)
+        if(scarfyPos.y >= windowHeight - scarfyRect.height)
         {
             isGrounded = true;
             isJumping = false;
@@ -36,15 +43,16 @@ int main()
         if(IsKeyPressed(KEY_SPACE)&& !isJumping)
         {
             isJumping = true;
-            velocity -= 10;
+            velocity += jumpHeight;
         }
         //Update position
         
-        posY += velocity;
+        scarfyPos.y += velocity;
         
-        DrawRectangle(windowWidth/2, posY, rectWidth, rectHeight, RED);
+        DrawTextureRec(scarfy, scarfyRect, scarfyPos, WHITE);
        
         EndDrawing();
     }
+    UnloadTexture(scarfy);
     CloseWindow();
 }
