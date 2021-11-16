@@ -11,16 +11,14 @@ int main()
    const int jumpHeight = -600;
    bool isGrounded = true;
    bool isJumping = false;
-   //Sprite variables
-   Texture2D scarfy = LoadTexture("/Volumes/ESD-USB/Dapper_Dasher_Project/textures/scarfy.png");
-   Rectangle scarfyRect;
-   scarfyRect.width = scarfy.width/6;
-   scarfyRect.height = scarfy.height;
-   scarfyRect.x = 0;
-   scarfyRect.y = 0;
-   Vector2 scarfyPos;
-   scarfyPos.x = windowWidth/2 - scarfyRect.width/2;
-   scarfyPos.y = windowHeight - scarfyRect.height;
+   //Hazard Sprite variables
+   Texture2D hazardSprite = LoadTexture("/Volumes/ESD-USB/Dapper_Dasher_Project/textures/12_nebula_spritesheet.png");
+   Rectangle hazardRect{0.0f, 0.0f, hazardSprite.width/8, hazardSprite.height };
+   Vector2 hazardPos{windowWidth, windowHeight - hazardRect.height};
+   //Scarfy Sprite variables
+   Texture2D sprite = LoadTexture("/Volumes/ESD-USB/Dapper_Dasher_Project/textures/scarfy.png");
+   Rectangle spriteRect{0.0f,0.0f,sprite.width/6,sprite.height};
+   Vector2 spritePos{windowWidth/2 - spriteRect.width/2, windowHeight - spriteRect.height};
    // Animation
    int frame = 0;
    const float updateTime = 1.0/12.0;
@@ -34,7 +32,7 @@ int main()
         ClearBackground(WHITE);
         
         //Ground check
-        if(scarfyPos.y >= windowHeight - scarfyRect.height)
+        if(spritePos.y >= windowHeight - spriteRect.height)
         {
             isGrounded = true;
             isJumping = false;
@@ -45,29 +43,28 @@ int main()
             isGrounded = false;
             velocity += gravity * deltaTime;
         }  
-        
+        //Jump input
         if(IsKeyPressed(KEY_SPACE)&& !isJumping)
         {
             isJumping = true;
             velocity += jumpHeight;
         }
         //Update position
-        scarfyPos.y += velocity * deltaTime;
+        spritePos.y += velocity * deltaTime;
         //Update animation frame
         runningTime += deltaTime;
         if(runningTime >= updateTime)
         {
             runningTime = 0.0;
-            scarfyRect.x = frame * scarfyRect.width;
+            spriteRect.x = frame * spriteRect.width;
             frame++;
         }
-       
         if(frame > 5)
             frame = 0;
-        DrawTextureRec(scarfy, scarfyRect, scarfyPos, WHITE);
-       
+        DrawTextureRec(sprite, spriteRect, spritePos, WHITE);
         EndDrawing();
     }
-    UnloadTexture(scarfy);
+    UnloadTexture(sprite);
+    UnloadTexture(hazardSprite);
     CloseWindow();
 }
